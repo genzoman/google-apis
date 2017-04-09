@@ -1,0 +1,7 @@
+/node_modules
+/**/*.map
+/secrets.json
+/launch.json
+/client_secret.json
+.vscode
+/.vscode/**/*.json
