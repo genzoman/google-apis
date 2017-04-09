@@ -1,6 +1,7 @@
 var Promise = require("bluebird");
 const fs = Promise.promisifyAll(require("fs"));
 var googleAuthFactory = require("./googleAuthFactory");
+const rl = require("readline");
 
 class Token {
   constructor(opts) {
@@ -27,8 +28,34 @@ class Token {
     return this.auth;
   }
 
-  static for(opts) {
-    ///todo
+  async for(scope) {
+    let auth = await this.authClient();
+    let authUrl = auth.generateAuthUrl({
+      access_type: "offline",
+      scope: scope
+    });
+
+    console.log("Authorize this app by visiting: ", authUrl);
+    var rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    let newTokenPromise = new Promise(resolve => {
+      rl.question('Enter the code from that page here: ', function (code) {
+        rl.close();
+        auth.getToken(code, function (err, token) {
+          if (err) {
+            console.log('Error while trying to retrieve access token', err);
+            return;
+          }
+          auth.credentials = token;
+          return resolve(auth);
+        });
+      });
+    }, reject => {
+      console.log("some error");
+    })
+    return newTokenPromise;
   }
 }
 
