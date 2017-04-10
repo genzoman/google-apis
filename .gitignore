@@ -5,3 +5,6 @@
 /client_secret.json
 .vscode
 /.vscode/**/*.json
+/**/*.png
+/**/*.jpg
+/**/*.svg
